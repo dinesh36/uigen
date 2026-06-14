@@ -30,7 +30,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           <div
             key={message.id || message.content}
             className={cn(
-              "flex gap-4",
+              "flex gap-4 items-center",
               message.role === "user" ? "justify-end" : "justify-start"
             )}
           >
@@ -74,23 +74,47 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
                                 <span className="text-sm text-neutral-700">{part.reasoning}</span>
                               </div>
                             );
-                          case "tool-invocation":
+                          case "tool-invocation": {
                             const tool = part.toolInvocation;
+                            const isDone = tool.state === "result" && tool.result != null;
+                            const args = tool.args as Record<string, unknown>;
+                            const command = args?.command as string | undefined;
+                            const path = args?.path as string | undefined;
+                            const newPath = args?.new_path as string | undefined;
+                            const fileName = path?.split("/").pop() ?? path ?? "";
+                            const newFileName = newPath?.split("/").pop() ?? newPath ?? "";
+
+                            const getDisplayText = () => {
+                              if (tool.toolName === "str_replace_editor") {
+                                switch (command) {
+                                  case "create": return `Creating ${fileName}`;
+                                  case "str_replace": return `Editing ${fileName}`;
+                                  case "insert": return `Inserting into ${fileName}`;
+                                  case "view": return `Reading ${fileName}`;
+                                  default: return "Working on files…";
+                                }
+                              }
+                              if (tool.toolName === "file_manager") {
+                                switch (command) {
+                                  case "rename": return `Renaming ${fileName}${newFileName ? ` → ${newFileName}` : ""}`;
+                                  case "delete": return `Deleting ${fileName}`;
+                                  default: return "Managing files…";
+                                }
+                              }
+                              return tool.toolName;
+                            };
+
                             return (
                               <div key={partIndex} className="inline-flex items-center gap-2 mt-2 px-3 py-1.5 bg-neutral-50 rounded-lg text-xs font-mono border border-neutral-200">
-                                {tool.state === "result" && tool.result ? (
-                                  <>
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                                    <span className="text-neutral-700">{tool.toolName}</span>
-                                  </>
+                                {isDone ? (
+                                  <div className="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" />
                                 ) : (
-                                  <>
-                                    <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
-                                    <span className="text-neutral-700">{tool.toolName}</span>
-                                  </>
+                                  <Loader2 className="w-3 h-3 animate-spin text-blue-600 flex-shrink-0" />
                                 )}
+                                <span className="text-neutral-700">{getDisplayText()}</span>
                               </div>
                             );
+                          }
                           case "source":
                             return (
                               <div key={partIndex} className="mt-2 text-xs text-neutral-500">

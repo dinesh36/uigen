@@ -67,3 +67,7 @@ Open [http://localhost:3000](http://localhost:3000)
 - Prisma with SQLite
 - Anthropic Claude AI
 - Vercel AI SDK
+
+
+[Image #3] In the screenshot can you check the section `str_replace_editor` and try to update it in meaningful way which user can understand here 
+Let's do the ultrathink on this                                                                 
