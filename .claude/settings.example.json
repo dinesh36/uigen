@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__playwright"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node /Users/apple/Workspace/personal/learning/queries_COMPLETED/hooks/tsc.js"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq . > post-log.json"
+          }
+        ]
+      }
+    ]
+  }
+}
