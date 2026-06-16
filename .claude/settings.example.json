@@ -12,6 +12,10 @@
           {
             "type": "command",
             "command": "node /Users/apple/Workspace/personal/learning/queries_COMPLETED/hooks/tsc.js"
+          },
+          {
+            "type": "command",
+            "command": "node /Users/apple/Workspace/personal/learning/uigen/hooks/post_write.js"
           }
         ]
       },
