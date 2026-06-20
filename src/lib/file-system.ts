@@ -501,6 +501,72 @@ export class VirtualFileSystem {
     return `Text inserted at line ${insertLine} in ${path}`;
   }
 
+  copyFile(sourcePath: string, destPath: string): boolean {
+    const normalizedSrc = this.normalizePath(sourcePath);
+    const normalizedDest = this.normalizePath(destPath);
+
+    if (normalizedSrc === "/" || normalizedDest === "/") {
+      return false;
+    }
+
+    const sourceNode = this.files.get(normalizedSrc);
+    if (!sourceNode || sourceNode.type !== "file") {
+      return false;
+    }
+
+    if (this.files.has(normalizedDest)) {
+      return false;
+    }
+
+    const destParentPath = this.getParentPath(normalizedDest);
+    if (!this.exists(destParentPath)) {
+      const parts = destParentPath.split("/").filter(Boolean);
+      let currentPath = "";
+      for (const part of parts) {
+        currentPath += "/" + part;
+        if (!this.exists(currentPath)) {
+          this.createDirectory(currentPath);
+        }
+      }
+    }
+
+    const destParent = this.getParentNode(normalizedDest);
+    if (!destParent || destParent.type !== "directory") {
+      return false;
+    }
+
+    const destName = this.getFileName(normalizedDest);
+    const copy: FileNode = {
+      type: "file",
+      name: destName,
+      path: normalizedDest,
+      content: sourceNode.content,
+    };
+
+    this.files.set(normalizedDest, copy);
+    destParent.children!.set(destName, copy);
+
+    return true;
+  }
+
+  getStats(): { totalFiles: number; totalDirectories: number; totalBytes: number } {
+    let totalFiles = 0;
+    let totalDirectories = 0;
+    let totalBytes = 0;
+
+    for (const [path, node] of this.files) {
+      if (path === "/") continue;
+      if (node.type === "file") {
+        totalFiles++;
+        totalBytes += (node.content || "").length;
+      } else {
+        totalDirectories++;
+      }
+    }
+
+    return { totalFiles, totalDirectories, totalBytes };
+  }
+
   reset(): void {
     // Clear all files and reset to initial state
     this.files.clear();
