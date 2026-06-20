@@ -501,6 +501,20 @@ export class VirtualFileSystem {
     return `Text inserted at line ${insertLine} in ${path}`;
   }
 
+  /**
+   * Copies a file from sourcePath to destPath.
+   *
+   * @param sourcePath - Path to an existing file. Directories cannot be copied.
+   * @param destPath - Destination path. Must not already exist. Parent dirs are
+   *   created automatically.
+   * @returns true if the copy succeeded; false if source doesn't exist, is a
+   *   directory, destination already exists, or parent can't be created.
+   *
+   * @example
+   * vfs.createFile("/src/Button.tsx", "export default function Button() {}");
+   * vfs.copyFile("/src/Button.tsx", "/src/ButtonCopy.tsx"); // true
+   * vfs.readFile("/src/ButtonCopy.tsx"); // "export default function Button() {}"
+   */
   copyFile(sourcePath: string, destPath: string): boolean {
     const normalizedSrc = this.normalizePath(sourcePath);
     const normalizedDest = this.normalizePath(destPath);
@@ -549,6 +563,19 @@ export class VirtualFileSystem {
     return true;
   }
 
+  /**
+   * Returns aggregate statistics about the virtual file system.
+   *
+   * @returns Object with:
+   *   - totalFiles: file count (root excluded)
+   *   - totalDirectories: directory count (root excluded)
+   *   - totalBytes: sum of all file content lengths in UTF-8 bytes
+   *
+   * @example
+   * vfs.createFile("/components/Button.tsx", "export default function Button() {}");
+   * vfs.createDirectory("/src");
+   * vfs.getStats(); // { totalFiles: 1, totalDirectories: 2, totalBytes: 38 }
+   */
   getStats(): { totalFiles: number; totalDirectories: number; totalBytes: number } {
     let totalFiles = 0;
     let totalDirectories = 0;
