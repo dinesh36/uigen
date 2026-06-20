@@ -32,3 +32,14 @@ bash .claude/skills/uigen-guide/scripts/find-usages.sh <term>
 **Only read `assets/component-template.tsx`** when the user wants to create a new React component and needs a starting point that matches project conventions.
 
 **Only read `assets/design-guidelines-color-palette.png`** when the user specifically asks about colors, design tokens, branding, or which shade to use for a UI element.
+
+## File Usage Reference
+
+| # | External File | Example Prompt | File Loaded |
+|---|---|---|---|
+| 0 | _(none)_ | "What is UIGen and what are its key files?" | ❌ SKILL.md only |
+| 1 | `references/architecture.md` | "How does the Babel transform pipeline work in UIGen and how does the import map get generated?" | ✅ |
+| 2 | `references/data-flow.md` | "How does a message flow end-to-end in UIGen, from the user sending a chat message all the way to the iframe re-rendering?" | ✅ |
+| 3 | `scripts/find-usages.sh` | "Where is VirtualFileSystem imported and referenced across the src/ folder?" | ✅ |
+| 4 | `assets/component-template.tsx` | "I want to create a new React component — can you give me a starting point that matches the project conventions?" | ✅ |
+| 5 | `assets/design-guidelines-color-palette.png` | "What colors should I use for a primary button in UIGen?" | ✅ |
